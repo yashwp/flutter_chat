@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './widgets/messages.dart';
+import './widgets/new_message.dart';
+
 
 class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const endPoint = 'chats/Y1MzU5nx4FPQDRmgduU8/messages';
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter Chat'),
@@ -33,7 +33,8 @@ class ChatScreen extends StatelessWidget {
                 FirebaseAuth.instance.signOut();
               }
             },
-          )
+          ),
+          SizedBox(width: 8)
         ],
       ),
       body: Container(
@@ -41,18 +42,11 @@ class ChatScreen extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Messages()
-            )
+            ),
+            NewMessage()
           ],
         ),
       ),
-      floatingActionButton:
-          FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                Firestore.instance.collection(endPoint)
-                    .add({'text': 'Click by + button'});
-              }
-            ),
     );
   }
 }
