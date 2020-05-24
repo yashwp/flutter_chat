@@ -1,8 +1,12 @@
-import 'package:chat_app/screens/auth/widgets/auth_form.dart';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import './widgets/auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -13,7 +17,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
   var _isLoading = false;
 
-  void _submitUser(String email, String username, String password, bool isLogin, BuildContext ctx) async {
+  void _submitUser(String email, String username, String password, bool isLogin, File dp, BuildContext ctx) async {
     AuthResult _result;
 
     try {
@@ -25,11 +29,17 @@ class _AuthScreenState extends State<AuthScreen> {
 
       } else {
         _result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-        print(_result.user);
-        Firestore.instance.collection('users').document(_result.user.uid)
+
+        final ref = FirebaseStorage.instance.ref().child('user_dp')
+          .child(_result.user.uid + '.jpg');
+        await ref.putFile(dp).onComplete;
+        final dpUrl = await ref.getDownloadURL();
+
+        await Firestore.instance.collection('users').document(_result.user.uid)
             .setData({
               'username': username,
-              'email': email
+              'email': email,
+              'dpUrl': dpUrl
             });
       }
       setState(() {

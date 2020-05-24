@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chat_app/screens/auth/widgets/image_upload.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -7,6 +10,7 @@ class AuthForm extends StatefulWidget {
       String username,
       String password,
       bool isLogin,
+      File dp,
       BuildContext ctx,
       ) submit;
 
@@ -22,15 +26,28 @@ class _AuthFormState extends State<AuthForm> {
   String username;
   String password;
   var _isLogin = true;
+  File _userDp;
+
+  void _pickerImage(File image) {
+    _userDp = image;
+  }
 
   void _validate() {
     FocusScope.of(context).unfocus();
+
+    if (_userDp == null && !_isLogin) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Theme.of(context).errorColor,
+        content: Text('Please upload an image'),
+      ));
+      return;
+    }
 
     if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState.save();
-    widget.submit(email, username, password, _isLogin, context);
+    widget.submit(email, username, password, _isLogin, _userDp, context);
   }
 
   @override
@@ -46,6 +63,7 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  if (!_isLogin) ImageUpload(_pickerImage),
                    TextFormField(
                      key: ValueKey('email'),
                     validator: (val) {
