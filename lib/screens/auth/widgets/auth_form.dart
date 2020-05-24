@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chat_app/screens/auth/widgets/image_upload.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -72,6 +73,9 @@ class _AuthFormState extends State<AuthForm> {
                       }
                       return null;
                     },
+                     autocorrect: false,
+                     textCapitalization: TextCapitalization.none,
+                     enableSuggestions: false,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
